@@ -1,8 +1,8 @@
-from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Integer
 from sqlalchemy.ext.declarative import declarative_base
 
-engine = create_engine('sqlite:////Users/ejach/PycharmProjects/notion-budgeter/db.sqlite', echo=True)
+from . import engine
+
 Base = declarative_base()
 
 
