@@ -1,6 +1,6 @@
 from inspect import getframeinfo, currentframe
 
-from src.models import DatabaseSession
+from notion_budgeter.models import DatabaseSession
 from sqlalchemy.exc import OperationalError
 
 

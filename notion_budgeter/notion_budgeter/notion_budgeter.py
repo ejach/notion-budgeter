@@ -8,8 +8,8 @@ from plaid.model.transactions_get_request_options import TransactionsGetRequestO
 from requests import post, exceptions
 from sqlalchemy import insert
 
-from src.models.Transactions import Transactions
-from src.models.decorators.decorators import db_connector
+from notion_budgeter.models.Transactions import Transactions
+from notion_budgeter.models.decorators.decorators import db_connector
 
 
 def send_req(body):
