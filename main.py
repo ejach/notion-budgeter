@@ -46,9 +46,8 @@ api_client = plaid.ApiClient(configuration)
 client = papi.PlaidApi(api_client)
 response = client.transactions_get(request)
 transactions = response['transactions']
-arr, dic = [], {}
 
-ids = [i[1] for i in db_conn(text('SELECT * FROM transactions;')).fetchall()]
+ids = [i[0] for i in db_conn(text('SELECT t_id FROM transactions;')).fetchall()]
 for x in transactions:
     if transactions and x['transaction_id'] not in ids:
         dic = {
