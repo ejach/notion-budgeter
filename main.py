@@ -50,7 +50,7 @@ arr, dic = [], {}
 
 ids = [i[1] for i in db_conn(text('SELECT * FROM transactions;')).fetchall()]
 for x in transactions:
-    if x['transaction_id'] not in ids:
+    if transactions and x['transaction_id'] not in ids:
         dic = {
             'amount': x['amount'],
             'date': datetime.strftime(x['date'], '%Y-%m-%dT%H:%M:%SZ'),
