@@ -1,9 +1,6 @@
 from sqlalchemy import Column, Integer
-from sqlalchemy.ext.declarative import declarative_base
 
-from . import engine
-
-Base = declarative_base()
+from . import Base
 
 
 class Transactions(Base):
@@ -14,6 +11,3 @@ class Transactions(Base):
 
     def __init__(self, name):
         self.name = name
-
-
-Base.metadata.create_all(engine)

@@ -1,9 +1,10 @@
 from os import getenv
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, declarative_base
 
-engine = create_engine('sqlite:///%s/db.sqlite' % getenv('data_dir'), echo=True)
+engine = create_engine('sqlite:///%s/db.sqlite' % getenv('data_dir'))
+Base = declarative_base()
 
 
 class DatabaseSession:
@@ -12,6 +13,8 @@ class DatabaseSession:
         self.session = Session(engine)
 
         self.session.expire_on_commit = False
+
+        Base.metadata.create_all(engine)
 
         return self.session
 
