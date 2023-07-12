@@ -12,7 +12,7 @@ version: '3.7'
 services:
   notion_budgeter:
     image: notion_budgeter
-    container_name: ghcr.io/ejach/notion_budgeter
+    container_name: ghcr.io/ejach/notion-budgeter
     environment:
       - access_token=<access_token>
       - client_id=<plaid_client_id>
