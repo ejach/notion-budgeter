@@ -11,8 +11,8 @@ Keeps a given Notion database up to date with transactions using Plaid.
 version: '3.7'
 services:
   notion_budgeter:
-    image: notion_budgeter
-    container_name: ghcr.io/ejach/notion-budgeter
+    image: ghcr.io/ejach/notion-budgeter
+    container_name: notion_budgeter
     environment:
       - access_token=<access_token>
       - client_id=<plaid_client_id>
