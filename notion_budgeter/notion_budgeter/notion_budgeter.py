@@ -18,6 +18,8 @@ def send_req(body):
         post(getenv('base_url'), headers={'Content-Type': 'application/json'}, data=dumps(body))
     except exceptions.ConnectionError as e:
         Logger.log.exception('Base URL invalid, please try again' + '\n' + str(e))
+    except exceptions.RequestsWarning as w:
+        Logger.log.info(w)
 
 
 def get_plaid_info():

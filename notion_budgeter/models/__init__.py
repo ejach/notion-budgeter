@@ -1,9 +1,8 @@
-from os import getenv
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base
 
-engine = create_engine('sqlite:///%s/db.sqlite' % getenv('data_dir'))
+# create in-memory database
+engine = create_engine('sqlite://')
 Base = declarative_base()
 
 
