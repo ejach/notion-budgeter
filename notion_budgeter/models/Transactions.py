@@ -8,6 +8,3 @@ class Transactions(Base):
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     t_id = Column(Integer, unique=True)
-
-    def __init__(self, name):
-        self.name = name
