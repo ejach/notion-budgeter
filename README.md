@@ -19,6 +19,7 @@ services:
       - secret=<plaid_secret>
       - base_url=<pipedream_base_url>
       - data_dir=<path_to_data>
+      - environment=<development OR sandbox> # optional
     volumes:
       - /path/to/data:/path/to/data
     restart: unless-stopped
