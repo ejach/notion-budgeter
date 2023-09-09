@@ -1,4 +1,4 @@
-from os import getenv
+from os import getenv, environ
 from datetime import datetime, timedelta
 from json import dumps
 
@@ -22,7 +22,8 @@ def send_req(body):
 
 def get_plaid_info():
     configuration = plaid.Configuration(
-        host=plaid.Environment.Development,
+        host=plaid.Environment.Sandbox if 'environment' in environ and getenv('environment').lower() == 'sandbox'
+        else plaid.Environment.Development,
         api_key={
             'clientId': getenv('client_id'),
             'secret': getenv('secret'),
