@@ -44,7 +44,7 @@ Pre-requisites:
 - [Notion](https://notion.so) account
 - A Notion database with a Pipedream connection (see the [Notion guide](https://www.notion.so/help/guides/connecting-tools-to-notion))
 - [Pipedream](https://pipedream.com) account
-- [Plaid](https://dashboard.plaid.com/signup) account with a [Development API Token](https://plaid.com/docs/quickstart/glossary/#development) and an account `client_id` and `secret` from a connected financial account (see the [Quickstart](https://github.com/plaid/quickstart) repository)
+- [Plaid](https://dashboard.plaid.com/signup) account with a [Development API Token](https://plaid.com/docs/quickstart/glossary/#development) an account`client_id`/`secret`, and an `access_token` from a connected financial account (see the [Quickstart](https://github.com/plaid/quickstart) repository)
 
 ____
 
