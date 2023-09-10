@@ -24,6 +24,19 @@ services:
       - /path/to/data:/path/to/data
     restart: unless-stopped
 ```
+| Variable       | Description                                                               |
+|----------------|---------------------------------------------------------------------------|
+| `access_token` | Token associated with financial account (see below)                       |
+| `client_id`    | ID associated with a Plaid account                                        |
+| `secret`       | Key associated with environment                                           |
+| `base_url`     | Pipedream workflow URL to interact with Notion                            |
+| `data_dir`     | Path to where the database file should be stored                          |
+| `environment`  | What Plaid environment should the program run in (development or sandbox) |
+
+
+
+
+
 #### Installation
 > NOTE: What you do with the `POST` request data is up to you. I ended up using a [Pipedream](https://pipedream.com) workflow to interact with Notion to keep it simple. Any plugin that receives `POST` requests and interacts with Notion will work fine. Likewise, anything that is demonstrated in this guide can be customized to fit your needs.
 
