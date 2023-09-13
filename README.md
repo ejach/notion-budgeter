@@ -46,6 +46,8 @@ Pre-requisites:
 - [Pipedream](https://pipedream.com) account
 - [Plaid](https://dashboard.plaid.com/signup) account with a [Development API `Secret`](https://plaid.com/docs/quickstart/glossary/#development) an account `client_id`, and an `access_token` from a connected financial account (see the [Quickstart](https://github.com/plaid/quickstart) repository)
 
+> NOTE: If you get a "[Connectivity not supported](https://plaid.com/docs/link/troubleshooting/#missing-institutions-or-connectivity-not-supported-error)" error when using the Quickstart repository to get an `access_token`, follow [this](https://github.com/plaid/plaid-postman#making-api-calls-with-real-data-in-production-or-development) guide.
+
 ____
 
 ##### Step 1:
