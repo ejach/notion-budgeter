@@ -1,7 +1,9 @@
 from inspect import getframeinfo, currentframe
 
-from notion_budgeter.models import DatabaseSession
 from sqlalchemy.exc import OperationalError
+
+from notion_budgeter.models import DatabaseSession
+from notion_budgeter.logger.logger import Logger
 
 
 # Connect to the database and roll back commits when exceptions are thrown
@@ -11,13 +13,12 @@ def db_connector(f):
             try:
                 result = f(*args, connection=conn, **kwargs)
             except OperationalError as e:
-                print(str(getframeinfo(currentframe()).function) + '\n' + 'Line: ' +
+                Logger.log.exception(str(getframeinfo(currentframe()).function) + '\n' + 'Line: ' +
                       str(getframeinfo(currentframe()).lineno) + '\n' + str(e))
                 conn.rollback()
             except TypeError as e:
-                print(str(getframeinfo(currentframe()).function) + '\n' + 'Line: ' +
-                      str(getframeinfo(currentframe()).lineno) + '\n' + str(e) + '\n'
-                      + 'Blank input detected, database not manipulated')
+                Logger.log.exception(str(getframeinfo(currentframe()).function) + '\n' + 'Line: ' +
+                      str(getframeinfo(currentframe()).lineno) + '\n' + str(e))
                 conn.rollback()
             finally:
                 conn.close()
