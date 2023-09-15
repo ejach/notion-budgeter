@@ -20,18 +20,20 @@ services:
       - base_url=<pipedream_base_url>
       - data_dir=<path_to_data>
       - environment=<development OR sandbox> # optional
+      - include_account_ids=<true OR false> # optional
     volumes:
       - /path/to/data:/path/to/data
     restart: unless-stopped
 ```
-| Variable       | Description                                                               |
-|----------------|---------------------------------------------------------------------------|
-| `access_token` | Token associated with financial account (see below)                       |
-| `client_id`    | ID associated with a Plaid account                                        |
-| `secret`       | Key associated with environment                                           |
-| `base_url`     | Pipedream workflow URL to interact with Notion                            |
-| `data_dir`     | Path to where the database file should be stored                          |
-| `environment`  | What Plaid environment should the program run in (development or sandbox) |
+| Variable              | Description                                                               | Required |
+|-----------------------|---------------------------------------------------------------------------|----------|
+| `access_token`        | Token associated with financial account (see below)                       | ✅        |
+| `client_id`           | ID associated with a Plaid account                                        | ✅        |
+| `secret`              | Key associated with environment                                           | ✅        |
+| `base_url`            | Pipedream workflow URL to interact with Notion                            | ✅        |
+| `data_dir`            | Path to where the database file should be stored                          | ✅        |
+| `environment`         | What Plaid environment should the program run in (development or sandbox) | ❌        |
+| `include_account_ids` | Include account ID's in request (true or false)                           | ❌        |
 
 
 
