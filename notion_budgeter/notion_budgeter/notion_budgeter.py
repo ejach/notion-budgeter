@@ -43,7 +43,7 @@ def get_plaid_info():
     api_client = plaid.ApiClient(configuration)
     client = papi.PlaidApi(api_client)
     response = client.transactions_get(request)
-    return response['transactions']
+    return response
 
 
 @db_connector
@@ -61,9 +61,10 @@ def insert_into_db(q, **kwargs):
 
 
 def send_to_notion():
-    transactions = get_plaid_info()
+    plaid_info = get_plaid_info()
+    transactions = plaid_info['transactions']
     ids = [i[0] for i in get_from_db(Transactions.t_id).fetchall()]
-    acc_ids = dict(enumerate(set([i['account_id'] for i in get_plaid_info()]), start=1))
+    acc_ids = dict(enumerate(set([i['account_id'] for i in plaid_info['accounts']]), start=1))
     for x in transactions:
         if transactions and x['transaction_id'] not in ids:
             date = datetime.strftime(x['date'], '%Y-%m-%dT%H:%M:%SZ')
