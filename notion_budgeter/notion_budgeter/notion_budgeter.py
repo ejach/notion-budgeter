@@ -66,15 +66,17 @@ def send_to_notion():
     acc_ids = dict(enumerate(set([i['account_id'] for i in get_plaid_info()]), start=1))
     for x in transactions:
         if transactions and x['transaction_id'] not in ids:
+            date = datetime.strftime(x['date'], '%Y-%m-%dT%H:%M:%SZ')
+            Logger.log.info('%s - Logging transaction %s***' % (date, x['transaction_id'][:-30]))
             a_id = [name for name, avail in acc_ids.items() if avail == x['account_id']]
             dic = {
                 'amount': x['amount'],
-                'date': datetime.strftime(x['date'], '%Y-%m-%dT%H:%M:%SZ'),
+                'date': date,
                 'expense': x['name'],
                 'acc_id': 'Account %s' % a_id[0]
             } if 'include_account_ids' in environ and bool(getenv('include_account_ids')) else {
                 'amount': x['amount'],
-                'date': datetime.strftime(x['date'], '%Y-%m-%dT%H:%M:%SZ'),
+                'date': date,
                 'expense': x['name']
             }
             send_req(dic)
