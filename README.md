@@ -25,15 +25,15 @@ services:
       - /path/to/data:/path/to/data
     restart: unless-stopped
 ```
-| Variable              | Description                                                               | Required |
-|-----------------------|---------------------------------------------------------------------------|----------|
-| `access_token`        | Token associated with financial account (see below)                       | ✅        |
-| `client_id`           | ID associated with a Plaid account                                        | ✅        |
-| `secret`              | Key associated with environment                                           | ✅        |
-| `base_url`            | Pipedream workflow URL to interact with Notion                            | ✅        |
-| `data_dir`            | Path to where the database file should be stored                          | ✅        |
-| `environment`         | What Plaid environment should the program run in (development or sandbox) | ❌        |
-| `include_account_ids` | Include account ID's in request (true or false)                           | ❌        |
+| Variable         | Description                                                                   | Required |
+|------------------|-------------------------------------------------------------------------------|----------|
+| `access_token`   | Token associated with financial account (see below)                           | ✅        |
+| `client_id`      | ID associated with a Plaid account                                            | ✅        |
+| `secret`         | Key associated with environment                                               | ✅        |
+| `base_url`       | Pipedream workflow URL to interact with Notion                                | ✅        |
+| `data_dir`       | Path to where the database file should be stored                              | ✅        |
+| `environment`    | What Plaid environment should the program run in (`development` or `sandbox`) | ❌        |
+| `label_accounts` | Label account ID's in request (`true` or `false`)                             | ❌        |
 
 
 
