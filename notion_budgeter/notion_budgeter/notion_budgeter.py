@@ -75,7 +75,7 @@ def send_to_notion():
                 'date': date,
                 'expense': x['name'],
                 'acc_id': 'Account %s' % a_id[0]
-            } if 'include_account_ids' in environ and bool(getenv('include_account_ids')) else {
+            } if 'label_accounts' in environ and bool(getenv('label_accounts')) else {
                 'amount': x['amount'],
                 'date': date,
                 'expense': x['name']
