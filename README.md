@@ -20,7 +20,7 @@ services:
       - base_url=<pipedream_base_url>
       - data_dir=<path_to_data>
       - environment=<development OR sandbox> # optional
-      - include_account_ids=<true OR false> # optional
+      - label_accounts=<true OR false> # optional
     volumes:
       - /path/to/data:/path/to/data
     restart: unless-stopped
