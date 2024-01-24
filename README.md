@@ -85,3 +85,5 @@ When adding these to your environment, they need to be encapsulated in quotes `"
 
 
 More information on this format can be found [here](https://developers.notion.com/reference/database#database-property).
+
+> NOTE: Use a Python code beautifier like [Code Beautify](https://codebeautify.org/python-formatter-beautifier) if you get stuck.

@@ -3,7 +3,7 @@ from os import getenv, environ
 from datetime import datetime, timedelta
 from sys import exit
 
-from notion_client import Client
+from notion_client import APIResponseError, Client
 import plaid
 from plaid.api import plaid_api as papi
 from plaid.model.transactions_get_request_options import TransactionsGetRequestOptions
@@ -59,9 +59,9 @@ def send_to_notion():
     transactions = plaid_info['transactions']
     ids = [i[0] for i in get_from_db(Transactions.t_id).fetchall()]
     for x in transactions:
-        date = datetime.strftime(x['date'], '%Y-%m-%dT%H:%M:%SZ')
         if transactions and x['transaction_id'] not in ids:
             if 'notion_secret' in environ and 'notion_db' in environ:
+                date = datetime.strftime(x['date'], '%Y-%m-%dT%H:%M:%SZ')
                 notion = Client(auth=getenv('notion_secret'))
                 db_query = notion.search(**{
                     'query': getenv('notion_db'),
@@ -70,7 +70,7 @@ def send_to_notion():
                 })
 
                 if len(db_query['results']) == 0:
-                    exit('Notion database not found, please check your configuration.')
+                    exit('Notion database not found. Please check your configuration.')
                 
                 db_id = db_query['results'][0]['id']
                 db_obj = notion.databases.retrieve(database_id=db_id)
@@ -80,16 +80,18 @@ def send_to_notion():
                     'Date': {'date': {'start': date}},
                 }
 
-                try:
-                    if 'custom_property' in environ:
+                if 'custom_property' in environ:
+                    try:
                         props.update(literal_eval((getenv('custom_property'))))
-                except SyntaxError as e:
-                    exit('Syntax error. Please check the formatting of your custom_property \n%s' % e)
-                
-                notion_page = notion.pages.create(
-                    parent={'database_id': db_obj['id']},
-                    properties=props
-                )
+                    except SyntaxError as e:
+                        exit('Syntax error. Please check the formatting of your custom_property: %s' % e)
+                try:
+                    notion_page = notion.pages.create(
+                        parent={'database_id': db_obj['id']},
+                        properties=props
+                    )
+                except APIResponseError as e:
+                    exit('Bad Request. Make sure your configuration is correct: %s' % e)
                 if notion_page['object'] == 'error':
                     exit('Notion error: %s' % notion_page['message'])
             else:
