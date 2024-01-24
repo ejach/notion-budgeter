@@ -86,14 +86,12 @@ def send_to_notion():
                     except SyntaxError as e:
                         exit('Syntax error. Please check the formatting of your custom_property: %s' % e)
                 try:
-                    notion_page = notion.pages.create(
+                    notion.pages.create(
                         parent={'database_id': db_obj['id']},
                         properties=props
                     )
                 except APIResponseError as e:
                     exit('Bad Request. Make sure your configuration is correct: %s' % e)
-                if notion_page['object'] == 'error':
-                    exit('Notion error: %s' % notion_page['message'])
             else:
                 exit('Notion environment variables not found. Please check your environment.')
             Logger.log.info('%s - Logging transaction %s***' % (date, x['transaction_id'][:-30]))
