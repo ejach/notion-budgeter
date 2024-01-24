@@ -85,6 +85,7 @@ def send_to_notion():
                         props.update(literal_eval((getenv('custom_property'))))
                     except SyntaxError as e:
                         exit('Syntax error. Please check the formatting of your custom_property: %s' % e)
+
                 try:
                     notion.pages.create(
                         parent={'database_id': db_obj['id']},
