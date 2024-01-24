@@ -1,8 +1,8 @@
 ### notion-budgeter
 [![PyPI](https://img.shields.io/pypi/v/plaid-python?logo=python&label=plaid-python&style=flat-square&color=FFD43B)](https://pypi.org/project/plaid-python/)
+[![PyPI](https://img.shields.io/pypi/v/notion-client?logo=python&label=notion-client&style=flat-square&color=FFD43B)](https://pypi.org/project/notion-client/)
 [![PyPI](https://img.shields.io/pypi/v/schedule?logo=python&label=schedule&style=flat-square&color=FFD43B)](https://pypi.org/project/schedule/)
 [![PyPI](https://img.shields.io/pypi/v/SQLAlchemy?logo=python&label=SQLAlchemy&style=flat-square&color=FFD43B)](https://pypi.org/project/SQLAlchemy/)
-[![PyPI](https://img.shields.io/pypi/v/requests?logo=python&label=requests&style=flat-square&color=FFD43B)](https://pypi.org/project/requests/)
 
 Keeps a given Notion database up to date with transactions using Plaid.
 
@@ -15,12 +15,13 @@ services:
     container_name: notion_budgeter
     environment:
       - access_token=<access_token>
-      - client_id=<plaid_client_id>
-      - secret=<plaid_secret>
-      - base_url=<pipedream_base_url>
-      - data_dir=<path_to_data>
-      - environment=<development OR sandbox> # optional
-      - label_accounts=<true OR false> # optional
+      - client_id=<client_id>
+      - secret=<secret>
+      - environment=<development OR sandbox> # optional, defaults to development
+      - data_dir=<data_dir>
+      - notion_secret=<notion_secret>
+      - notion_db=<notion_db>
+      - custom_property=<custom_property> # optional
     volumes:
       - /path/to/data:/path/to/data
     restart: unless-stopped
@@ -30,71 +31,44 @@ services:
 | `access_token`   | Token associated with financial account (see below)                           | ✅        |
 | `client_id`      | ID associated with a Plaid account                                            | ✅        |
 | `secret`         | Key associated with environment                                               | ✅        |
-| `base_url`       | Pipedream workflow URL to interact with Notion                                | ✅        |
 | `data_dir`       | Path to where the database file should be stored                              | ✅        |
 | `environment`    | What Plaid environment should the program run in (`development` or `sandbox`) | ❌        |
-| `label_accounts` | Label account ID's in request (`true` or `false`)                             | ❌        |
+| `notion_secret` | The secret token associated with your Notion integration                             | ✅        |
+| `notion_db` | The database name that you want the data to be stored in (case-sensitive)                            | ✅        |
+| `custom_property` | Custom property in the format that Notion expects (see below)                            | ❌        |
 
 
 
 
 
 #### Installation
-> NOTE: What you do with the `POST` request data is up to you. I ended up using a [Pipedream](https://pipedream.com) workflow to interact with Notion to keep it simple. Any plugin that receives `POST` requests and interacts with Notion will work fine. Likewise, anything that is demonstrated in this guide can be customized to fit your needs.
 
 Pre-requisites:
 - [Notion](https://notion.so) account
-- A Notion database with a Pipedream connection (see the [Notion guide](https://www.notion.so/help/guides/connecting-tools-to-notion))
-- [Pipedream](https://pipedream.com) account
+- A Notion Integration added to a desired database (see the [Notion guide](https://www.notion.so/help/create-integrations-with-the-notion-api))
 - [Plaid](https://dashboard.plaid.com/signup) account with a [Development API `Secret`](https://plaid.com/docs/quickstart/glossary/#development) an account `client_id`, and an `access_token` from a connected financial account (see the [Quickstart](https://github.com/plaid/quickstart) repository)
 
 > NOTE: If you get a "[Connectivity not supported](https://plaid.com/docs/link/troubleshooting/#missing-institutions-or-connectivity-not-supported-error)" error when using the Quickstart repository to get an `access_token`, follow [this](https://github.com/plaid/plaid-postman#making-api-calls-with-real-data-in-production-or-development) guide.
 
 ____
 
-##### Step 1:
+#### How to format the `custom_property`
 
-Log into [Pipedream](https://pipedream.com) and create a new workflow.
-
-
-> NOTE: No matter what you do with the data, the first step in any workflow should consume the `POST` requests
+The program expects a Python-like dictionary:
 
 
-Select the `New Webhook / HTTP Requests` trigger and select `HTTP Body Only` 
+```python
+{'Category': {'type': 'multi_select', 'multi_select': [{'name': '\u2754Uncategorized'}]}}
+```
 
 
-<img width="1440" alt="Screenshot 2023-07-16 at 1 49 36 PM" src="https://github.com/ejach/notion-budgeter/assets/42357644/879ca940-a7f0-424b-965f-e20d6b5cc341">
-
-##### Step 2:
-
-Add a new trigger by hitting the `+` and search for `Notion` 
+Or a list of Python-like dictionaries:
 
 
-Under the `Notion Actions` select `Create a Page from Database` 
+```python
+{'Category': {'type': 'multi_select', 'multi_select': [{'name': '\u2754Uncategorized'}]}, 
+'Comment': {'type': 'rich_text', 'rich_text': [{'type': 'text', 'text': { 'content': 'Hello World' }}]}}
+```
 
 
-<img width="1438" alt="Screenshot 2023-07-16 at 2 03 43 PM" src="https://github.com/ejach/notion-budgeter/assets/42357644/c4e2f712-5ef3-4c19-9b8b-6f2cb527fa9f">
-
-After you create this workflow, connect your Notion account to Pipedream, and you will see your databases under `Parent Database ID`:
-
-<img width="1437" alt="Screenshot 2023-07-16 at 2 13 56 PM" src="https://github.com/ejach/notion-budgeter/assets/42357644/10944460-8cde-4b89-8509-2ab1081efb37">
-
-
-#### Step 3
-
-Select the `Property Types` you wish to populate with the `POST` data
-
-<img width="1440" alt="Screenshot 2023-07-16 at 2 19 30 PM" src="https://github.com/ejach/notion-budgeter/assets/42357644/20fded6a-671c-4444-bd36-9d6bc5de7645">
-
-To access the data from the `POST` request, use the format `{{steps.trigger.event.$VAR}}`
-
-The variables to be retrieved from the request are:
-- `{{steps.trigger.event.expense}}` - Expense name
-- `{{steps.trigger.event.amount}}` - Expense amount
-- `{{steps.trigger.event.date}}` - Date posted
-
-After everything is populated and the workflow works correctly, hit the `Deploy` button, and copy the link to be used when setting up the environment:
-
-<img width="1249" alt="Screenshot 2023-07-16 at 2 29 32 PM" src="https://github.com/ejach/notion-budgeter/assets/42357644/3518207c-045d-495b-aeba-63baefabb472">
-
-Go crazy 🤙🏻
+When adding these to your environment, they need to be encapsulated in quotes `""`
