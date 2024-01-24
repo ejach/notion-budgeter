@@ -34,7 +34,7 @@ services:
 | `data_dir`       | Path to where the database file should be stored                              | ✅        |
 | `environment`    | What Plaid environment should the program run in (`development` or `sandbox`) | ❌        |
 | `notion_secret` | The secret token associated with your Notion integration                             | ✅        |
-| `notion_db` | The database name that you want the data to be stored in (case-sensitive)                            | ✅        |
+| `notion_db` | What Notion database name to write to (case-sensitive)                            | ✅        |
 | `custom_property` | Custom property in the format that Notion expects (see below)                            | ❌        |
 
 
@@ -51,7 +51,7 @@ Pre-requisites:
 > NOTE: If you get a "[Connectivity not supported](https://plaid.com/docs/link/troubleshooting/#missing-institutions-or-connectivity-not-supported-error)" error when using the Quickstart repository to get an `access_token`, follow [this](https://github.com/plaid/plaid-postman#making-api-calls-with-real-data-in-production-or-development) guide.
 
 ____
-#### Properties this program expects
+#### Expected properties
 
 ```bash
 'Expense' -> type: text
@@ -84,4 +84,4 @@ Or a list of Python-like dictionaries:
 When adding these to your environment, they need to be encapsulated in quotes `""`
 
 
-More information on this format can be found [Here](https://developers.notion.com/reference/database#database-property).
+More information on this format can be found [here](https://developers.notion.com/reference/database#database-property).
