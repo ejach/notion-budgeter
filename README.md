@@ -51,8 +51,18 @@ Pre-requisites:
 > NOTE: If you get a "[Connectivity not supported](https://plaid.com/docs/link/troubleshooting/#missing-institutions-or-connectivity-not-supported-error)" error when using the Quickstart repository to get an `access_token`, follow [this](https://github.com/plaid/plaid-postman#making-api-calls-with-real-data-in-production-or-development) guide.
 
 ____
+#### Properties this program expects
 
-#### How to format the `custom_property`
+```bash
+'Expense' -> type: text
+'Amount' -> type: number
+'Date' -> type: date
+```
+You **must** format your Notion database to have these properties.
+
+
+
+#### How to format Custom Properties
 
 The program expects a Python-like dictionary:
 
@@ -72,3 +82,6 @@ Or a list of Python-like dictionaries:
 
 
 When adding these to your environment, they need to be encapsulated in quotes `""`
+
+
+More information on this format can be found [Here](https://developers.notion.com/reference/database#database-property).
