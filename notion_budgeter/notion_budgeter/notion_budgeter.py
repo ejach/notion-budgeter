@@ -1,5 +1,5 @@
 from ast import literal_eval
-from os import getenv, environ
+from os import environ
 from datetime import datetime, timedelta
 from sys import exit
 
@@ -19,15 +19,15 @@ def get_plaid_info():
         host=plaid.Environment.Sandbox if 'environment' in environ and getenv('environment').lower() == 'sandbox'
         else plaid.Environment.Development,
         api_key={
-            'clientId': getenv('client_id'),
-            'secret': getenv('secret'),
+            'clientId': environ.get('client_id'),
+            'secret': environ.get('secret'),
         }
     )
 
     yesterday = datetime.today() - timedelta(days=1)
     today = datetime.today()
     request = papi.TransactionsGetRequest(
-        access_token=getenv('access_token'),
+        access_token=environ.get('access_token'),
         start_date=datetime.date(yesterday),
         end_date=datetime.date(today),
         options=TransactionsGetRequestOptions(
@@ -58,13 +58,14 @@ def send_to_notion():
     plaid_info = get_plaid_info()
     transactions = plaid_info['transactions']
     ids = [i[0] for i in get_from_db(Transactions.t_id).fetchall()]
-    for x in transactions:
-        if transactions and x['transaction_id'] not in ids:
-            if 'notion_secret' in environ and 'notion_db' in environ:
+    excluded = environ.get('excluded', '').split(',') or [environ.get('excluded')]
+    if 'notion_secret' in environ and 'notion_db' in environ:
+        for x in transactions:
+            if transactions and x['transaction_id'] not in ids and x['name'] not in excluded:
                 date = datetime.strftime(x['date'], '%Y-%m-%dT%H:%M:%SZ')
-                notion = Client(auth=getenv('notion_secret'))
+                notion = Client(auth=environ.get('notion_secret'))
                 db_query = notion.search(**{
-                    'query': getenv('notion_db'),
+                    'query': environ.get('notion_db'),
                     'property': 'object',
                     'value': 'database'
                 })
@@ -82,7 +83,7 @@ def send_to_notion():
 
                 if 'custom_property' in environ:
                     try:
-                        props.update(literal_eval((getenv('custom_property'))))
+                        props.update(literal_eval((environ.get('custom_property'))))
                     except SyntaxError as e:
                         exit('Syntax error. Please check the formatting of your custom_property: %s' % e)
 
@@ -93,7 +94,8 @@ def send_to_notion():
                     )
                 except APIResponseError as e:
                     exit('Bad Request. Make sure your configuration is correct: %s' % e)
-            else:
-                exit('Notion environment variables not found. Please check your environment.')
-            Logger.log.info('%s - Logging transaction %s***' % (date, x['transaction_id'][:-30]))
-            insert_into_db(insert(Transactions).values(t_id=x['transaction_id']))
+
+                Logger.log.info('%s - Logging transaction %s***' % (date, x['transaction_id'][:-30]))
+                insert_into_db(insert(Transactions).values(t_id=x['transaction_id']))
+    else:
+        exit('Notion environment variables not found. Please check your environment.')

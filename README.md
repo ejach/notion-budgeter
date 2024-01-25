@@ -22,6 +22,7 @@ services:
       - notion_secret=<notion_secret>
       - notion_db=<notion_db>
       - custom_property=<custom_property> # optional
+      - excluded=<excluded> # optional
     volumes:
       - /path/to/data:/path/to/data
     restart: unless-stopped
@@ -36,6 +37,7 @@ services:
 | `notion_secret` | The secret token associated with your Notion integration                             | ✅        |
 | `notion_db` | What Notion database name to write to (case-sensitive)                            | ✅        |
 | `custom_property` | Custom property in the format that Notion expects (see below)                            | ❌        |
+| `excluded` | Expense name(s) that will not be written to Notion (Example: `Walmart` or `Walmart,Amazon`)                            | ❌        |
 
 
 
