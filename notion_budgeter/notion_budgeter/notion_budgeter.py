@@ -16,7 +16,7 @@ from notion_budgeter.logger.logger import Logger
 
 def get_plaid_info():
     configuration = plaid.Configuration(
-        host=plaid.Environment.Sandbox if 'environment' in environ and getenv('environment').lower() == 'sandbox'
+        host=plaid.Environment.Sandbox if 'environment' in environ and environ.get('environment').lower() == 'sandbox'
         else plaid.Environment.Development,
         api_key={
             'clientId': environ.get('client_id'),
