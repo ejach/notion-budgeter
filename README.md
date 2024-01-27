@@ -23,6 +23,7 @@ services:
       - notion_db=<notion_db>
       - custom_property=<custom_property> # optional
       - excluded=<excluded> # optional
+      - icon=<icon> # optional
     volumes:
       - /path/to/data:/path/to/data
     restart: unless-stopped
@@ -38,6 +39,7 @@ services:
 | `notion_db` | What Notion database name to write to (case-sensitive)                            | ✅        |
 | `custom_property` | Custom property in the format that Notion expects (see below)                            | ❌        |
 | `excluded` | Expense name(s) that will not be written to Notion (Example: `Walmart` or `Walmart,Amazon`)                            | ❌        |
+| `icon` | What icon should the expense have in Notion (Example: `💳`)                            | ❌        |
 
 
 
