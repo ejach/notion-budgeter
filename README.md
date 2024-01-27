@@ -23,7 +23,7 @@ services:
       - notion_db=<notion_db>
       - custom_property=<custom_property> # optional
       - excluded=<excluded> # optional
-      - icon=<icon> # optional
+      - icon=<icon> # optional, default 🧾
     volumes:
       - /path/to/data:/path/to/data
     restart: unless-stopped
