@@ -90,7 +90,8 @@ def send_to_notion():
                 try:
                     notion.pages.create(
                         parent={'database_id': db_obj['id']},
-                        properties=props
+                        properties=props,
+                        icon={'emoji': environ.get('icon', '🧾')}
                     )
                 except APIResponseError as e:
                     exit('Bad Request. Make sure your configuration is correct: %s' % e)
