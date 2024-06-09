@@ -8,7 +8,7 @@ from notion_client import Client
 from plaid.api import plaid_api as papi
 from plaid.model.transactions_get_request_options import TransactionsGetRequestOptions
 from requests import get
-from sqlalchemy import insert, desc, cast, select, Integer
+from sqlalchemy import insert, desc, cast, select, Integer, asc
 
 from notion_budgeter.logger.logger import Logger
 from notion_budgeter.models.Transactions import Transactions
@@ -43,7 +43,7 @@ def get_plaid_info():
 
 
 @db_connector
-def get_teller_info(**kwargs):
+def get_teller_info():
     url = 'https://api.teller.io/accounts/%s/transactions' % getenv('teller_account_id')
 
     # Access token and paths to the certificate and key files
@@ -55,12 +55,8 @@ def get_teller_info(**kwargs):
         if not path.exists(p):
             exit('One or more Teller .pem path is incorrect.')
 
-    db = kwargs.pop('connection')
-    stmt = select(Transactions.t_id).order_by(desc(cast(Transactions.id, Integer)))
-    last_id = db.execute(stmt).first()
-
     # Making the request with the certificate and key
-    response = get(url, cert=(cert_path, key_path), auth=(access_token, ''), params={'from_id': last_id})
+    response = get(url, cert=(cert_path, key_path), auth=(access_token, ''))
     results = response.json()
 
     if response.status_code == 403:
