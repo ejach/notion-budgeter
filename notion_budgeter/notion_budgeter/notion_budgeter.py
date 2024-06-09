@@ -42,7 +42,6 @@ def get_plaid_info():
     return response
 
 
-@db_connector
 def get_teller_info():
     url = 'https://api.teller.io/accounts/%s/transactions' % getenv('teller_account_id')
 
