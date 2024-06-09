@@ -1,6 +1,6 @@
 from ast import literal_eval
 from datetime import datetime, timedelta
-from os import getenv, environ
+from os import getenv, environ, path
 from sys import exit
 
 import plaid
@@ -50,6 +50,10 @@ def get_teller_info(**kwargs):
     cert_path = getenv('teller_cert_path')
     key_path = getenv('teller_key_path')
     access_token = getenv('teller_access_token')
+
+    for p in (cert_path, key_path):
+        if not path.exists(p):
+            exit('One or more Teller .pem paths is incorrect.')
 
     db = kwargs.pop('connection')
     stmt = select(Transactions.t_id).order_by(desc(cast(Transactions.id, Integer)))
