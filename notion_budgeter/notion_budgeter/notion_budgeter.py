@@ -53,7 +53,7 @@ def get_teller_info(**kwargs):
 
     for p in (cert_path, key_path):
         if not path.exists(p):
-            exit('One or more Teller .pem paths is incorrect.')
+            exit('One or more Teller .pem path is incorrect.')
 
     db = kwargs.pop('connection')
     stmt = select(Transactions.t_id).order_by(desc(cast(Transactions.id, Integer)))
