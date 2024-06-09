@@ -19,7 +19,7 @@ def get_plaid_info():
     configuration = plaid.Configuration(
         host=plaid.Environment.Sandbox if 'plaid_environment' in environ and
                                           getenv('plaid_environment').lower() == 'sandbox'
-                                          else plaid.Environment.Development,
+        else plaid.Environment.Development,
         api_key={
             'clientId': getenv('plaid_client_id'),
             'secret': getenv('plaid_secret'),
@@ -88,9 +88,12 @@ def send_to_notion():
     transaction_info = get_teller_info() if teller_enabled else get_plaid_info()
     transactions = transaction_info if teller_enabled else transaction_info['transactions']
     ids = [i[0] for i in get_from_db(Transactions.t_id).fetchall()]
+    excluded = environ.get('excluded', '').split(',') or [environ.get('excluded')]
+    valid_entry = lambda tid, name: tid not in ids and name not in excluded
     for x in transactions:
         date = x['date'] if teller_enabled else datetime.strftime(x['date'], '%Y-%m-%dT%H:%M:%SZ')
-        if transactions and x['id'] not in ids if teller_enabled else x['transaction_id'] not in ids:
+        if transactions and valid_entry(x['id'], x['description']) if teller_enabled else valid_entry(
+                x['transaction_id'], x['name']):
             if 'notion_secret' in environ and 'notion_db' in environ:
                 notion = Client(auth=getenv('notion_secret'))
                 db_query = notion.search(**{
@@ -105,7 +108,7 @@ def send_to_notion():
                 db_id = db_query['results'][0]['id']
                 db_obj = notion.databases.retrieve(database_id=db_id)
                 props = {
-                    'Expense': {'title': [{'text': {'content': x['description'] if teller_enabled else ['name']}}]},
+                    'Expense': {'title': [{'text': {'content': x['description'] if teller_enabled else x['name']}}]},
                     'Amount': {'number': float(x['amount'])},
                     'Date': {'date': {'start': date}},
                 }
@@ -118,7 +121,9 @@ def send_to_notion():
 
                 notion_page = notion.pages.create(
                     parent={'database_id': db_obj['id']},
-                    properties=props
+                    properties=props,
+                    icon={'emoji': environ.get('notion_icon', '\U0001F9FE'.encode('raw-unicode-escape')
+                                               .decode('unicode-escape'))}
                 )
                 if notion_page['object'] == 'error':
                     exit('Notion error: %s' % notion_page['message'])

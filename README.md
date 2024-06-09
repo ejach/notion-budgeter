@@ -23,31 +23,34 @@ services:
       - notion_secret=<notion_secret>
       - notion_db=<notion_db>
       - notion_custom_property=<custom_property> # optional
+      - notion_icon=<notion_icon> # optional, default 🧾
       - teller_enabled=<True or False> # optional
       - teller_account_id=<teller_account_id> # optional
       - teller_access_token=<teller_access_token> # optional
       - teller_cert_path=<teller_cert_path> # optional
       - teller_key_path=<teller_key_path> # optional
+      - excluded=<expense_name> # optional
     volumes:
       - /path/to/data:/path/to/data
     restart: unless-stopped
 ```
-| Variable                 | Description                                                                   | Required  |
-|--------------------------|-------------------------------------------------------------------------------|-----------|
-| `plaid_access_token`     | Token associated with financial account (see below)                           | ❌         |
-| `plaid_client_id`        | ID associated with a Plaid account                                            | ❌         |
-| `plaid_secret`           | Key associated with environment                                               | ❌         |
-| `plaid_environment`      | What Plaid environment should the program run in (`development` or `sandbox`) | ❌         |
-| `data_dir`               | Path to where the database file should be stored                              | ✅         |
-| `notion_secret`          | The secret token associated with your Notion integration                      | ✅         |
-| `notion_db`              | The database name that you want the data to be stored in (case-sensitive)     | ✅         |
-| `notion_custom_property` | Custom property in the format that Notion expects (see below)                 | ❌         |
-| `teller_enabled`         | Should the environemnt use Teller (`True` or `False`)                         | ❌         |
-| `teller_account_id`      | ID associated with your Teller account                                        | ❌         |
-| `teller_access_token`    | Token associated with your Teller account                                     | ❌         |
-| `teller_cert_path`       | Path to the Teller certificate `.pem` file                                    | ❌         |
-| `teller_key_path`        | Path to the Teller key `.pem` file                                            | ❌         |
-
+| Variable                 | Description                                                                            | Required   |
+|--------------------------|----------------------------------------------------------------------------------------|------------|
+| `plaid_access_token`     | Token associated with financial account (see below)                                    | ❌         |
+| `plaid_client_id`        | ID associated with a Plaid account                                                     | ❌         |
+| `plaid_secret`           | Key associated with environment                                                        | ❌         |
+| `plaid_environment`      | What Plaid environment should the program run in (`development` or `sandbox`)          | ❌         |
+| `data_dir`               | Path to where the database file should be stored                                       | ✅         |
+| `notion_secret`          | The secret token associated with your Notion integration                               | ✅         |
+| `notion_db`              | The database name that you want the data to be stored in (case-sensitive)              | ✅         |
+| `notion_custom_property` | Custom property in the format that Notion expects (see below)                          | ❌         |
+| `notion_icon`            | What icon should the expense have in Notion (Example: 💳)                              | ❌         |
+| `teller_enabled`         | Should the environemnt use Teller (`True` or `False`)                                  | ❌         |
+| `teller_account_id`      | ID associated with your Teller account                                                 | ❌         |
+| `teller_access_token`    | Token associated with your Teller account                                              | ❌         |
+| `teller_cert_path`       | Path to the Teller certificate `.pem` file                                             | ❌         |
+| `teller_key_path`        | Path to the Teller key `.pem` file                                                     | ❌         |
+| `excluded`               | Expense name(s) that will not be written to Notion (Example: Walmart or Walmart,Amazon)| ❌         |
 
 
 
@@ -96,3 +99,5 @@ When adding these to your environment, they need to be encapsulated in quotes `"
 
 
 More information on this format can be found [here](https://developers.notion.com/reference/database#database-property).
+
+> NOTE: Use a Python code beautifier like [Code Beautify](https://codebeautify.org/python-formatter-beautifier) if you get stuck.
