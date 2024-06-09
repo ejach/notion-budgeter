@@ -1,4 +1,4 @@
-from logging import INFO, basicConfig, getLogger, StreamHandler, CRITICAL, ERROR, DEBUG
+from logging import INFO, basicConfig, getLogger
 from sys import stdout
 
 # One-line lambda wrapper for the singleton design pattern

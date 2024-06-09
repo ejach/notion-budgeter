@@ -4,7 +4,7 @@ from . import Base
 
 
 class Transactions(Base):
-    __tablename__ = "transactions"
+    __tablename__ = 'transactions'
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     t_id = Column(Integer, unique=True)

@@ -2,3 +2,4 @@ plaid-python~=15.0.0
 SQLAlchemy~=2.0.18
 schedule~=1.2.0
 notion-client~=2.2.1
+requests~=2.31.0
