@@ -8,7 +8,7 @@ from notion_client import Client
 from plaid.api import plaid_api as papi
 from plaid.model.transactions_get_request_options import TransactionsGetRequestOptions
 from requests import get
-from sqlalchemy import insert, desc, cast, select, Integer, asc
+from sqlalchemy import insert
 
 from notion_budgeter.logger.logger import Logger
 from notion_budgeter.models.Transactions import Transactions
@@ -61,7 +61,7 @@ def get_teller_info():
     if response.status_code == 403:
         exit('Telly request failed: %s' % results['error']['message'])
 
-    return results
+    return [i for i in results if i['status'] == 'pending']
 
 
 @db_connector
