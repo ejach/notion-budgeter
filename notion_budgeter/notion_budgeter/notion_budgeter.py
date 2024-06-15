@@ -49,6 +49,8 @@ def get_teller_info():
     cert_path = getenv('teller_cert_path')
     key_path = getenv('teller_key_path')
     access_token = getenv('teller_access_token')
+    start_date = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
+    end_date = datetime.today().replace(hour=23, minute=59, second=59, microsecond=0)
 
     for p in (cert_path, key_path):
         if not path.exists(p):
@@ -61,7 +63,7 @@ def get_teller_info():
     if response.status_code == 403:
         exit('Telly request failed: %s' % results['error']['message'])
 
-    return [i for i in results if i['status'] == 'pending']
+    return [i for i in results if start_date <= datetime.strptime(i['date'], '%Y-%m-%d') <= end_date]
 
 
 @db_connector
