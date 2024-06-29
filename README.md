@@ -19,10 +19,10 @@ services:
       - notion_db=<notion_db>
       - notion_custom_property=<custom_property> # optional
       - notion_icon=<notion_icon> # optional, default 🧾
-      - teller_account_id=<teller_account_id> # optional
-      - teller_access_token=<teller_access_token> # optional
-      - teller_cert_path=<teller_cert_path> # optional
-      - teller_key_path=<teller_key_path> # optional
+      - teller_account_id=<teller_account_id>
+      - teller_access_token=<teller_access_token>
+      - teller_cert_path=<teller_cert_path>
+      - teller_key_path=<teller_key_path>
       - excluded=<expense_name> # optional
     volumes:
       - /path/to/data:/path/to/data
