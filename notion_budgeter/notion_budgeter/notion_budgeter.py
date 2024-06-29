@@ -54,10 +54,9 @@ def send_to_notion():
     transactions = get_teller_info()
     ids = [i[0] for i in get_from_db(Transactions.t_id).fetchall()]
     excluded = environ.get('excluded', '').split(',') or [environ.get('excluded')]
-    valid_entry = lambda tid, name: tid not in ids and name not in excluded
     for x in transactions:
         date = x['date']
-        if transactions and valid_entry(x['id'], x['description']):
+        if transactions and x['id'] not in ids and x['description'] not in excluded:
             if 'notion_secret' in environ and 'notion_db' in environ:
                 notion = Client(auth=getenv('notion_secret'))
                 db_query = notion.search(**{
