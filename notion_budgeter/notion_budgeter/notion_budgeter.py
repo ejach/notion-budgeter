@@ -3,43 +3,13 @@ from datetime import datetime, timedelta
 from os import getenv, environ, path
 from sys import exit
 
-import plaid
 from notion_client import Client
-from plaid.api import plaid_api as papi
-from plaid.model.transactions_get_request_options import TransactionsGetRequestOptions
 from requests import get
 from sqlalchemy import insert
 
 from notion_budgeter.logger.logger import Logger
 from notion_budgeter.models.Transactions import Transactions
 from notion_budgeter.models.decorators.decorators import db_connector
-
-
-def get_plaid_info():
-    configuration = plaid.Configuration(
-        host=plaid.Environment.Sandbox if 'plaid_environment' in environ and
-                                          getenv('plaid_environment').lower() == 'sandbox'
-        else plaid.Environment.Development,
-        api_key={
-            'clientId': getenv('plaid_client_id'),
-            'secret': getenv('plaid_secret'),
-        }
-    )
-
-    yesterday = datetime.today() - timedelta(days=1)
-    today = datetime.today()
-    request = papi.TransactionsGetRequest(
-        access_token=getenv('plaid_access_token'),
-        start_date=datetime.date(yesterday),
-        end_date=datetime.date(today),
-        options=TransactionsGetRequestOptions(
-            include_personal_finance_category=True
-        )
-    )
-    api_client = plaid.ApiClient(configuration)
-    client = papi.PlaidApi(api_client)
-    response = client.transactions_get(request)
-    return response
 
 
 def get_teller_info():
@@ -61,7 +31,7 @@ def get_teller_info():
     results = response.json()
 
     if response.status_code == 403:
-        exit('Telly request failed: %s' % results['error']['message'])
+        exit('Teller request failed: %s' % results['error']['message'])
 
     return [i for i in results if start_date <= datetime.strptime(i['date'], '%Y-%m-%d') <= end_date]
 
@@ -81,16 +51,13 @@ def insert_into_db(q, **kwargs):
 
 
 def send_to_notion():
-    teller_enabled = bool(getenv('teller_enabled'))
-    transaction_info = get_teller_info() if teller_enabled else get_plaid_info()
-    transactions = transaction_info if teller_enabled else transaction_info['transactions']
+    transactions = get_teller_info()
     ids = [i[0] for i in get_from_db(Transactions.t_id).fetchall()]
     excluded = environ.get('excluded', '').split(',') or [environ.get('excluded')]
     valid_entry = lambda tid, name: tid not in ids and name not in excluded
     for x in transactions:
-        date = x['date'] if teller_enabled else datetime.strftime(x['date'], '%Y-%m-%dT%H:%M:%SZ')
-        if transactions and valid_entry(x['id'], x['description']) if teller_enabled else valid_entry(
-                x['transaction_id'], x['name']):
+        date = x['date']
+        if transactions and valid_entry(x['id'], x['description']):
             if 'notion_secret' in environ and 'notion_db' in environ:
                 notion = Client(auth=getenv('notion_secret'))
                 db_query = notion.search(**{
@@ -105,7 +72,7 @@ def send_to_notion():
                 db_id = db_query['results'][0]['id']
                 db_obj = notion.databases.retrieve(database_id=db_id)
                 props = {
-                    'Expense': {'title': [{'text': {'content': x['description'] if teller_enabled else x['name']}}]},
+                    'Expense': {'title': [{'text': {'content': x['description']}}]},
                     'Amount': {'number': float(x['amount'])},
                     'Date': {'date': {'start': date}},
                 }
@@ -127,5 +94,5 @@ def send_to_notion():
             else:
                 exit('Notion environment variables not found. Please check your environment.')
             Logger.log.info(
-                '%s - Logging transaction %s***' % (date, x['id'] if teller_enabled else x['transaction_id'][:-30]))
-            insert_into_db(insert(Transactions).values(t_id=x['id'] if teller_enabled else ['transaction_id']))
+                '%s - Logging transaction %s***' % (date, x['id']))
+            insert_into_db(insert(Transactions).values(t_id=x['id']))
