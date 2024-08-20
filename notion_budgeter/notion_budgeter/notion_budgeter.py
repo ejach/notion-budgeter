@@ -32,8 +32,7 @@ def get_teller_info():
 
     if response.status_code == 403:
         exit('Teller request failed: %s' % results['error']['message'])
-
-    return [i for i in results if start_date <= datetime.strptime(i['date'], '%Y-%m-%d') <= end_date]
+    return [i for i in results if start_date <= datetime.strptime(i['date'], '%Y-%m-%d') <= end_date and i['status'] == 'pending']
 
 
 @db_connector
