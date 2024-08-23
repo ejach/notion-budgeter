@@ -4,7 +4,7 @@
 [![PyPI](https://img.shields.io/pypi/v/SQLAlchemy?logo=python&label=SQLAlchemy&style=flat-square&color=FFD43B)](https://pypi.org/project/SQLAlchemy/)
 [![PyPI](https://img.shields.io/pypi/v/Requests?logo=python&label=Requests&style=flat-square&color=FFD43B)](https://pypi.org/project/Requests/)
 
-Keeps a given Notion database up to date with transactions using Plaid.
+Keeps a given Notion database up to date with transactions using Teller.
 
 #### docker-compose.yml
 ```yml
