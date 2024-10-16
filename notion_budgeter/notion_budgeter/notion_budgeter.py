@@ -30,7 +30,7 @@ def get_teller_info():
     response = get(url, cert=(cert_path, key_path), auth=(access_token, ''))
     results = response.json()
 
-    if response.status_code == 403:
+    if response.status_code in [403, 410]:
         exit('Teller request failed: %s' % results['error']['message'])
     return [i for i in results if start_date <= datetime.strptime(i['date'], '%Y-%m-%d') <= end_date and i['status'] == 'pending']
 
