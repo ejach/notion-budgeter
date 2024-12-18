@@ -44,7 +44,7 @@ services:
 
 
 
-#### Installation
+### Environment Documentation
 
 Pre-requisites:
 - [Notion](https://notion.so) account
@@ -52,14 +52,14 @@ Pre-requisites:
 - A [Teller](https://teller.io) account with a connected financial account (see the [Documentation](https://teller.io/docs))
 
 ____
-#### Properties this program expects
+#### Expected Notion Columns
 
 ```bash
 'Expense' -> type: text
 'Amount' -> type: number
 'Date' -> type: date
 ```
-You must format your Notion database to have these properties.
+You must format your Notion database to have these columns.
 
 
 
