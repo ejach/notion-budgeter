@@ -2,7 +2,6 @@
 [![PyPI](https://img.shields.io/pypi/v/notion-client?logo=python&label=notion-client&style=flat-square&color=FFD43B)](https://pypi.org/project/notion-client/)
 [![PyPI](https://img.shields.io/pypi/v/schedule?logo=python&label=schedule&style=flat-square&color=FFD43B)](https://pypi.org/project/schedule/)
 [![PyPI](https://img.shields.io/pypi/v/SQLAlchemy?logo=python&label=SQLAlchemy&style=flat-square&color=FFD43B)](https://pypi.org/project/SQLAlchemy/)
-[![PyPI](https://img.shields.io/pypi/v/Requests?logo=python&label=Requests&style=flat-square&color=FFD43B)](https://pypi.org/project/Requests/)
 
 Keeps a given Notion database up to date with transactions using SimpleFin.
 

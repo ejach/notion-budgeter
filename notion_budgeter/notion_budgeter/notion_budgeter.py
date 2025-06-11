@@ -1,11 +1,14 @@
 from ast import literal_eval
-from datetime import datetime, timedelta
-from os import getenv, environ, path
+from base64 import b64encode
+from datetime import datetime, timedelta, timezone
+from json import loads
+from os import getenv, environ
 from sys import exit
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
+from urllib.parse import urlencode
 
 from notion_client import Client
-from requests import get
-from requests.auth import HTTPBasicAuth
 from sqlalchemy import insert
 
 from notion_budgeter.logger.logger import Logger
@@ -14,35 +17,40 @@ from notion_budgeter.models.decorators.decorators import db_connector
 
 
 def get_sfin_info():
-    url = 'https://beta-bridge.simplefin.org/simplefin/accounts'
+    base_url = 'https://beta-bridge.simplefin.org/simplefin/accounts'
 
-    # Include pending expenses
+    # Construct the URL
+    start_date = int((datetime.now(timezone.utc) - timedelta(days=2)).timestamp())
+    query = {'start-date': start_date}
     include_pending = getenv('include_pending', 'false').lower() in ['1', 'true', 'yes']
     if include_pending:
-        url = f'{url}?pending=1'
+        query['pending'] = 1
+    url = f'{base_url}?{urlencode(query)}'
 
-
+    # Construct the Auth/Header
     username, password = getenv('simplefin_username'), getenv('simplefin_password')
-    start_date = int((datetime.utcnow() - timedelta(days=2)).timestamp())
+    credentials = f'{username}:{password}'.encode()
+    auth_header = b64encode(credentials).decode()
+    headers = {
+        'Authorization': f'Basic {auth_header}',
+        'User-Agent': 'notion-budgeter/1.0 (https://github.com/ejach/notion-budgeter)',
+    }
 
-
-    # Making the request with the start-date parameter
-    response = get(
-        url,
-        auth=HTTPBasicAuth(username, password),
-        params={'start-date': start_date}
-    )
-    results = response.json()
-
-    if not response.ok:
-        exit('SimpleFin request failed: %s' % results['errors'])
+    req = Request(url, headers=headers)
+    try:
+        with urlopen(req) as response:
+            data = loads(response.read().decode())
+    except HTTPError as e:
+            exit(f'HTTP Error {e.code}: {e.reason}')
+    except URLError as e:
+        exit(f'Failed to reach the server: {e.reason}')
 
     return [
         {
             **tx,
-            'transacted_at': datetime.utcfromtimestamp(tx['transacted_at']).strftime('%Y-%m-%d'),
+            'transacted_at': datetime.fromtimestamp(tx['transacted_at'], tz=timezone.utc).strftime('%Y-%m-%d'),
             'amount': -float(tx['amount'])
-        } for tx in results['accounts'][0]['transactions']
+        } for tx in data['accounts'][0]['transactions']
     ]
 
 
@@ -65,11 +73,11 @@ def send_to_notion():
     ids = [i[0] for i in get_from_db(Transactions.t_id).fetchall()]
     excluded = environ.get('excluded', '').split(',') or [environ.get('excluded')]
 
+    # Initialize Notion
     notion_secret = getenv('notion_secret')
     notion_db_query = getenv('notion_db')
     if not notion_secret and not notion_db_query:
         exit('Notion environment variables not found. Please check your environment.')
-    # Initialize Notion
     notion = Client(auth=notion_secret)
 
     notion_custom_property = None
