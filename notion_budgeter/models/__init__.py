@@ -3,7 +3,7 @@ from os import getenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base
 
-engine = create_engine('sqlite:///%s/db.sqlite' % getenv('data_dir'))
+engine = create_engine(f'sqlite:///{getenv("data_dir")}/db.sqlite')
 Base = declarative_base()
 
 
