@@ -19,8 +19,13 @@ from notion_budgeter.models.decorators.decorators import db_connector
 def get_sfin_info():
     base_url = 'https://beta-bridge.simplefin.org/simplefin/accounts'
 
+    try:
+        days_back = int(getenv('simplefin_days_back', '2'))
+    except ValueError:
+        days_back = 2
+
     # Construct the URL
-    start_date = int((datetime.now(timezone.utc) - timedelta(days=2)).timestamp())
+    start_date = int((datetime.now(timezone.utc) - timedelta(days=days_back)).timestamp())
     query = {'start-date': start_date}
     include_pending = getenv('include_pending', 'false').lower() in ['1', 'true', 'yes']
     if include_pending:
@@ -85,11 +90,12 @@ def send_to_notion():
         if 'notion_custom_property' in environ:
             notion_custom_property = literal_eval((getenv('notion_custom_property')))
     except SyntaxError as e:
-        exit('Syntax error. Please check the formatting of your notion_custom_property \n%s' % e)
+        exit(f'Syntax error. Please check the formatting of your notion_custom_property \n{e}')
 
     for x in transactions:
         date = x['transacted_at']
-        if transactions and x['id'] not in ids and x['description'] not in excluded:
+        t_id = x['id']
+        if transactions and t_id not in ids and x['description'] not in excluded:
             db_query = notion.search(**{
                 'query': notion_db_query,
                 'property': 'object',
@@ -117,7 +123,6 @@ def send_to_notion():
                                            .decode('unicode-escape'))}
             )
             if notion_page['object'] == 'error':
-                exit('Notion error: %s' % notion_page['message'])
-            Logger.log.info(
-                '%s - Logging transaction %s***' % (date, x['id']))
-            insert_into_db(insert(Transactions).values(t_id=x['id']))
+                exit(f'Notion error: {notion_page["message"]}')
+            Logger.log.info(f'{date} - Logging transaction {t_id}')
+            insert_into_db(insert(Transactions).values(t_id=t_id))

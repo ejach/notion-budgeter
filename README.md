@@ -20,23 +20,25 @@ services:
       - notion_icon=<notion_icon> # optional, default 🧾
       - simplefin_username=<simplefin_username>
       - simplefin_password=<simplefin_password>
+      - simplefin_days_back=<simplefin_days_back> # optional,  default 2
       - include_pending=<True or False> # optional, default False
       - excluded=<expense_name> # optional
     volumes:
       - /path/to/data:/path/to/data
     restart: unless-stopped
 ```
-| Variable                 | Description                                                                             | Required |
-|--------------------------|-----------------------------------------------------------------------------------------|----------|
-| `data_dir`               | Path to where the database file should be stored                                        | ✅        |
-| `notion_secret`          | The secret token associated with your Notion integration                                | ✅        |
-| `notion_db`              | The database name that you want the data to be stored in (case-sensitive)               | ✅        |
-| `simplefin_username`     | Username associated with your SimpleFin account                                         | ✅        |
-| `simplefin_password`     | Password associated with your SimpleFin account                                         | ✅        |
-| `include_pending`        | Include pending expenses from SimpleFin (True or False)                                 | ❌        |
-| `notion_custom_property` | Custom property in the format that Notion expects (see below)                           | ❌        |
-| `notion_icon`            | What icon should the expense have in Notion (Example: 💳)                               | ❌        |
-| `excluded`               | Expense name(s) that will not be written to Notion (Example: Walmart or Walmart,Amazon) | ❌        |
+| Variable                 | Description                                                                                                                                                                                                               | Required |
+|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|
+| `data_dir`               | Path to where the database file should be stored                                                                                                                                                                          | ✅        |
+| `notion_secret`          | The secret token associated with your Notion integration                                                                                                                                                                  | ✅        |
+| `notion_db`              | The database name that you want the data to be stored in (case-sensitive)                                                                                                                                                 | ✅        |
+| `simplefin_username`     | Username associated with your SimpleFin account                                                                                                                                                                           | ✅        |
+| `simplefin_password`     | Password associated with your SimpleFin account                                                                                                                                                                           | ✅        |
+| `simplefin_days_back`    | How many days back should SimpleFin get expenses from moving forward (Default is 2, anything greater than 60-90 days [may not work](https://actualbudget.org/docs/advanced/bank-sync/simplefin/#simplefin-considerations) | ❌        |
+| `include_pending`        | Include pending expenses from SimpleFin (True or False)                                                                                                                                                                   | ❌        |
+| `notion_custom_property` | Custom property in the format that Notion expects (see below)                                                                                                                                                             | ❌        |
+| `notion_icon`            | What icon should the expense have in Notion (Example: 💳)                                                                                                                                                                 | ❌        |
+| `excluded`               | Expense name(s) that will not be written to Notion (Example: Walmart or Walmart,Amazon)                                                                                                                                   | ❌        |
 
 
 
